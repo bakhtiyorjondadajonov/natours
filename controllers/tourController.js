@@ -1,6 +1,7 @@
 const express = require('express');
 const Tour = require('../models/tourModel');
 const APIFeatures = require('../utilities/APIFeatures');
+const AppError = require('./../utilities/appError');
 // ---------REFACTORING OUR ROUTES -------------------
 
 // -------- CATCHING ERRORS IN ASYNC FUNCTIONS ---------- //
@@ -11,6 +12,9 @@ exports.updateTours = catchAsync(async (req, res, next) => {
     new: true,
     runValidators: true,
   });
+  if (!tour) {
+    return next(new AppError('No tour found with that ID!'), 404);
+  }
   res.status(201).json({
     status: 'success',
     data: {
@@ -20,7 +24,10 @@ exports.updateTours = catchAsync(async (req, res, next) => {
 });
 exports.deleteTours = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  await Tour.findByIdAndDelete(id);
+  const tour = await Tour.findByIdAndDelete(id);
+  if (!tour) {
+    return next(new AppError('No tour found with that ID!', 404));
+  }
   res.status(204).json({
     status: 'success',
     data: null,
@@ -29,12 +36,14 @@ exports.deleteTours = catchAsync(async (req, res, next) => {
 });
 exports.getAtour = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  const aTour = await Tour.findById(id);
-
+  const tour = await Tour.findById(id);
+  if (!tour) {
+    return next(new AppError('No tour found with that ID!', 404));
+  }
   res.status(200).json({
     message: 'Bismillah',
     data: {
-      aTour,
+      tour,
     },
   });
 });
