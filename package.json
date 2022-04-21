@@ -5,16 +5,19 @@
   "main": "app.js",
   "scripts": {
     "start": "nodemon server.js",
-    "debug":" ndb server.js"
+    "debug": " ndb server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
     "mongoose": "^6.2.10",
-    "slugify": "^1.6.5"
+    "mongoose-validator": "^2.1.0",
+    "slugify": "^1.6.5",
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "eslint": "^8.12.0",
