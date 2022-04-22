@@ -19,6 +19,7 @@ const userSchema = mongoose.Schema({
     type: 'String',
     required: [true, 'User must have a password '],
     minLength: 8,
+    select: false,
   },
   // this only WORKS on SAVE AND CREATE
   passwordConfirm: {
@@ -43,5 +44,14 @@ userSchema.pre('save', async function (next) {
   this.passwordConfirm = undefined;
   next();
 });
+//Decoding the password
+//CREATING AN INSTANCE METHOD:this is avaiable in all documents of certain collection,it is like prototype methods in OOP
+userSchema.methods.correctPassword = async function (
+  //you can change the name of the method (here,it is "correctPassword")
+  candidatePassword,
+  userPassword
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
 const User = mongoose.model('User', userSchema);
 module.exports = User;

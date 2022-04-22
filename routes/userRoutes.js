@@ -4,6 +4,8 @@ const userController = require(`../controllers/userController`);
 const authenticationController = require(`../controllers/authenticationController`);
 // router.post('/signup', authenticationController.signUp);
 router.route('/signup').post(authenticationController.signUp);
+// router.route('/login').post();
+router.post('/login', authenticationController.login);
 router
   .route('/')
   .get(userController.getAllUsers)
