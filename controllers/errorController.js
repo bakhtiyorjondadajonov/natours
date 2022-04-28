@@ -9,6 +9,13 @@ const handleDublicateFieldsDB = (err) => {
   const message = `Dublicate field value ${value}. Please use another value!`;
   return new AppError(message, 400);
 };
+const HandleJsonWebTokenError = (err) => {
+  const message = 'Invalid web token,Please log in again';
+  return new AppError(message, 401);
+};
+const HandleJsonWebTokenExpired = () => {
+  return new AppError('Your token expired,please Log in again!', 401);
+};
 const sendErrorToDev = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,
@@ -40,8 +47,11 @@ module.exports = (err, req, res, next) => {
   if (process.env.NODE_ENV === 'development') {
     sendErrorToDev(err, res);
   } else if (process.env.NODE_ENV === 'production') {
-    let error;
+    let error = err;
     if (err.name === 'CastError') error = handleCastError(err);
+    if (err.name === 'JsonWebTokenError') error = HandleJsonWebTokenError(err);
+    if (err.name === 'TokenExpiredError')
+      error = HandleJsonWebTokenExpired(err);
     if (err.code === 11000) error = handleDublicateFieldsDB(err);
     sendErrorToProd(error, res);
   }

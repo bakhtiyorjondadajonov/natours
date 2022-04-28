@@ -14,6 +14,7 @@ exports.signUp = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
+    passwordChangedAt: req.body.passwordChangedAt,
   });
   const token = signInToken(newUser._id);
   res.status(201).json({
@@ -42,4 +43,45 @@ exports.login = catchAsync(async (req, res, next) => {
     status: 'success',
     token,
   });
+});
+exports.protect = catchAsync(async (req, res, next) => {
+  console.log('Bismillah');
+  // 1) Getting token and checking if its there
+  let token;
+
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token) {
+    return next(
+      new AppError('You are not logged in,Please log in to get access', 401)
+    );
+  }
+  // 2) Verification token
+  const payload = jwt.verify(token, process.env.SECRET_JWT);
+
+  // 3) Check if user still excists
+  const currentUser = await User.findById(payload.id);
+  if (!currentUser) {
+    return next(
+      new AppError('The User that belongs this token does not exist!', 401)
+    );
+  }
+
+  // 4) Check if user changed password after the JWT was issued
+  if (currentUser.changedPasswordAfter(payload.iat)) {
+    return next(
+      new AppError(
+        'You have changed the password recently,Please log in again.',
+        401
+      )
+    );
+  }
+  // GRANT ACCESS TO PROTECTED ROUTE
+  req.user = currentUser;
+  next();
 });
