@@ -10,6 +10,17 @@ const signInToken = function (id) {
     expiresIn: process.env.EXP_DATE,
   });
 };
+//---CREATE AND SAVE TOKEN FN------//
+const createAndSaveToken = (user, statusCode, res) => {
+  const token = signInToken(user._id);
+  res.status(statusCode).json({
+    status: 'success',
+    token,
+    data: {
+      user,
+    },
+  });
+};
 exports.signUp = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
     name: req.body.name,
@@ -18,14 +29,7 @@ exports.signUp = catchAsync(async (req, res, next) => {
     passwordConfirm: req.body.passwordConfirm,
     passwordChangedAt: req.body.passwordChangedAt,
   });
-  const token = signInToken(newUser._id);
-  res.status(201).json({
-    status: 'success',
-    token,
-    data: {
-      user: newUser,
-    },
-  });
+  createAndSaveToken(newUser, 201, res);
 });
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
@@ -167,12 +171,18 @@ exports.resetPassword = async (req, res, next) => {
   });
 };
 
-exports.updatePassword = (req, res, next) => {
+exports.updatePassword = async (req, res, next) => {
   // 1) Get user from collection
-  const user = req.user;
+  const user = await User.findById(req.user._id).select('+password');
+
   // 2) Check if POSTed current password is correct
-
+  if (!(await user.correctPassword(req.body.currentPassword, user.password))) {
+    return next(new AppError('Your password is NOT correct!', 401));
+  }
   // 3) If SourceBuffer, update password
-
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  await user.save();
   // 4) Log user in, send JWT
+  createAndSaveToken(user, 200, res);
 };
