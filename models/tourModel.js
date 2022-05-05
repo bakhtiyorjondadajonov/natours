@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+const User = require('./userModule');
 //Creating Schema  Sending Data to DATABASE similar to THE INTERFACE IN TYPESCRIPT
 const tourSchema = new mongoose.Schema(
   {
@@ -62,6 +63,36 @@ const tourSchema = new mongoose.Schema(
       type: Date,
       default: Date.now(),
     },
+    startLocation: {
+      //GeoJSON
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
+    locations: [
+      {
+        type: {
+          type: 'String',
+          default: 'Point',
+          enum: ['Point'],
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number,
+      },
+    ],
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: `User`, //Here is where magic happens
+      },
+    ],
   },
   {
     toJSON: {
@@ -82,7 +113,13 @@ const tourSchema = new mongoose.Schema(
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
+// tourSchema.pre('save', async function (next) {
+//   const guidesPromises = this.guides.map(async (id) => await User.findById(id));
 
+//   this.guides = await Promise.all(guidesPromises);
+
+//   next();
+// });
 //DOCUMENT MIDDWARE:runs before .save() and .create()
 // tourSchema.pre('save', function (next) {
 //   this.slug = slugify(this.name, { lower: true });
@@ -96,11 +133,14 @@ tourSchema.virtual('durationWeeks').get(function () {
 
 //QUERY MIDDLEWARE
 
-// tourSchema.pre(/^find/, function (next) {
-//   this.start = Date.now();
-//   this.find({ secretTour: { $ne: true } });
-//   next();
-// });
+tourSchema.pre(/^find/, function (next) {
+  this.start = Date.now();
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt',
+  });
+  next();
+});
 // tourSchema.post(/^find/, function (docs, next) {
 //   //now,we are using post middleware function thus our function has  got access to the docs we have on the database
 //   console.log(`Query took ${Date.now() - this.start} milliseconds!`);
