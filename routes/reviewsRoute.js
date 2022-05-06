@@ -3,12 +3,11 @@ const mongoose = require('mongoose');
 const router = express.Router({ mergeParams: true });
 const reviewsController = require('./../controllers/reviewController');
 const authenticationController = require('./../controllers/authenticationController');
-
+router.use(authenticationController.protect);
 router
   .route('/')
   .get(reviewsController.getAllReviews)
   .post(
-    authenticationController.protect,
     authenticationController.restrictTo('user'),
     reviewsController.setIdandUser,
     reviewsController.createReview
@@ -16,14 +15,12 @@ router
 router
   .route('/:id')
   .delete(
-    authenticationController.protect,
-    authenticationController.restrictTo('admin'),
+    authenticationController.restrictTo('admin', 'user'),
     reviewsController.deleteReview
   )
-  .get(authenticationController.protect, reviewsController.getReview)
+  .get(reviewsController.getReview)
   .patch(
-    authenticationController.protect,
-    authenticationController.restrictTo('user'),
+    authenticationController.restrictTo('user', 'admin'),
     reviewsController.updateReview
   );
 module.exports = router;

@@ -8,20 +8,12 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`, 'utf-8')
 );
 // ---------REFACTORING OUR ROUTES -------------- -----
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
 exports.updateUser = factory.updateOne(User);
-// exports.updateUsers = (req, res) => {
-//   res.status(500).json({
-//     status: 'error',
-//     message: 'This route is not yet defined',
-//   });
-// };
 exports.deleteUser = factory.deleteOne(User);
-// exports.deleteUsers = (req, res) => {
-//   res.status(500).json({
-//     status: 'error',
-//     message: 'This route is not yet defined',
-//   });
-// };
 exports.getAnuser = factory.getOne(User);
 exports.createUsers = (req, res) => {
   res.status(500).json({

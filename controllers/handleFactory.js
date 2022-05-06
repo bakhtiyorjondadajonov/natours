@@ -53,7 +53,6 @@ exports.getOne = (Model, popOptions) =>
     }
     document = await query;
 
-    console.log('document: ', document);
     if (!document) {
       return next(new AppError('No document found with that ID!', 404));
     }
