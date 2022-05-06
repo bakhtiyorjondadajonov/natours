@@ -3,44 +3,33 @@ const express = require('express');
 const User = require('../models/userModule');
 const catchAsync = require('./../utilities/catchAsync');
 const AppError = require('../utilities/appError');
+const factory = require('./handleFactory');
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`, 'utf-8')
 );
 // ---------REFACTORING OUR ROUTES -------------- -----
-exports.updateUsers = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined',
-  });
-};
-exports.deleteUsers = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined',
-  });
-};
-exports.getAnuser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined',
-  });
-};
+exports.updateUser = factory.updateOne(User);
+// exports.updateUsers = (req, res) => {
+//   res.status(500).json({
+//     status: 'error',
+//     message: 'This route is not yet defined',
+//   });
+// };
+exports.deleteUser = factory.deleteOne(User);
+// exports.deleteUsers = (req, res) => {
+//   res.status(500).json({
+//     status: 'error',
+//     message: 'This route is not yet defined',
+//   });
+// };
+exports.getAnuser = factory.getOne(User);
 exports.createUsers = (req, res) => {
   res.status(500).json({
     status: 'error',
-    message: 'This route is not yet defined',
+    message: 'This route is not yet defined,Please Use Sign Up instead!',
   });
 };
-exports.getAllUsers = catchAsync(async (req, res) => {
-  const user = await User.find();
-  res.json({
-    results: user.length,
-    message: 'Bismillah',
-    data: {
-      user,
-    },
-  });
-});
+exports.getAllUsers = factory.getAll(User);
 //----------CREATING FILTERED OBJECT FUNCTION--------------//
 const filteredObj = function (obj, ...elements) {
   const myFilteredObj = {};

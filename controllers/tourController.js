@@ -2,82 +2,25 @@ const express = require('express');
 const Tour = require('../models/tourModel');
 const APIFeatures = require('../utilities/APIFeatures');
 const AppError = require('./../utilities/appError');
+const factory = require('./handleFactory');
 // ---------REFACTORING OUR ROUTES -------------------
 
 // -------- CATCHING ERRORS IN ASYNC FUNCTIONS ---------- //
 const catchAsync = require('./../utilities/catchAsync');
-exports.updateTours = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
-  const tour = await Tour.findByIdAndUpdate(id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-  if (!tour) {
-    return next(new AppError('No tour found with that ID!'), 404);
-  }
-  res.status(201).json({
-    status: 'success',
-    data: {
-      tour,
-    },
-  });
-});
-exports.deleteTours = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
-  const tour = await Tour.findByIdAndDelete(id);
-  if (!tour) {
-    return next(new AppError('No tour found with that ID!', 404));
-  }
-  res.status(204).json({
-    status: 'success',
-    data: null,
-    message: 'deleted',
-  });
-});
-exports.getAtour = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
-  const tour = await Tour.findById(id);
-  if (!tour) {
-    return next(new AppError('No tour found with that ID!', 404));
-  }
-  res.status(200).json({
-    message: 'Bismillah',
-    data: {
-      tour,
-    },
-  });
-});
-exports.createTours = catchAsync(async (req, res, next) => {
-  const newTour = await Tour.create(req.body);
-  res.status(201).json({
-    status: 'success',
-    data: {
-      tour: newTour,
-    },
-  });
-});
+const Review = require('../models/reviewModel');
+exports.updateTours = factory.updateOne(Tour);
+exports.deleteTours = factory.deleteOne(Tour);
+exports.createTours = factory.createOne(Tour);
+
+exports.getAtour = factory.getOne(Tour, { path: 'reviews' });
+
 exports.aliasTopTours = (req, res, next) => {
   req.query.limit = 5;
   req.query.sort = '-ratingsAverage';
   req.query.fields = 'name,createdAt,summary,price,ratingsAverage';
   next();
 };
-
-exports.getAllTours = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(Tour.find(), req.query)
-    .filter()
-    .sorting()
-    .fieldsLimitation()
-    .paginate();
-  const tours = await features.query;
-  res.json({
-    results: tours.length,
-    message: 'Bismillah',
-    data: {
-      tours,
-    },
-  });
-});
+exports.getAllTours = factory.getAll(Tour);
 exports.getTourStates = catchAsync(async (req, res, next) => {
   const stats = await Tour.aggregate([
     {

@@ -9,6 +9,9 @@ const userSchema = mongoose.Schema({
     minLength: 3,
     maxLength: 12,
   },
+  photo: {
+    type: String,
+  },
   email: {
     type: String,
     require: [true, 'User must have an e-mail address'],
@@ -103,7 +106,6 @@ userSchema.methods.createPasswordResetToken = function () {
 
   return resetToken;
 };
-
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;

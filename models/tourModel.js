@@ -110,6 +110,13 @@ const tourSchema = new mongoose.Schema(
 
 // VIRTUAL PROPERITIES // In Mongoose, a virtual is a property that is not stored in MongoDB. Virtuals are typically used for computed properties on documents.
 // in order to be able to get VIRTUAL PROPERITIES we need to enable virtuals in tourSchema,options section 👆👆
+
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour',
+  localField: '_id',
+});
+
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });

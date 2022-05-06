@@ -28,15 +28,16 @@ router.delete(
   authenticationController.protect,
   userController.deleteMe
 );
-router
-  .route('/')
-  .get(userController.getAllUsers)
-  .post(userController.createUsers);
+router.route('/').get(userController.getAllUsers);
 
 router
   .route('/:id')
   .get(userController.getAnuser)
-  .patch(userController.updateUsers)
-  .delete(userController.deleteUsers);
+  .patch(
+    authenticationController.protect,
+    authenticationController.restrictTo('admin'),
+    userController.updateUser
+  )
+  .delete(userController.deleteUser);
 
 module.exports = router;
