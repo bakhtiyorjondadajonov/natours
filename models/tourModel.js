@@ -103,7 +103,8 @@ const tourSchema = new mongoose.Schema(
     },
   }
 );
-
+// tourSchema.index({ price: 1 });
+tourSchema.index({ price: 1, ratingsAverage: -1 });
 // Middleware (also called pre and post hooks)
 // are functions which are passed control during execution of asynchronous
 //  functions. Middleware is specified on the schema level and is useful for writing plugins.

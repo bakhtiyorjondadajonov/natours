@@ -48,7 +48,10 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError('Please,Enter password and email!!!', 400));
   }
   //check if user excists && password is correct
-  const user = await User.findOne({ email }).select('+password');
+  const user = await User.findOne({ email }).select(
+    '+password name role photo'
+  );
+
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError('Incorrect password or email!', 401));
   }
@@ -58,6 +61,7 @@ exports.login = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     token,
+    user,
   });
 });
 exports.protect = catchAsync(async (req, res, next) => {

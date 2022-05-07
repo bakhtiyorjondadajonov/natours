@@ -7,7 +7,7 @@ const userSchema = mongoose.Schema({
   name: {
     type: String,
     minLength: 3,
-    maxLength: 12,
+    maxLength: 25,
   },
   photo: {
     type: String,

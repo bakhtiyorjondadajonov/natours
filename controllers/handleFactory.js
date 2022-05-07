@@ -74,6 +74,7 @@ exports.getAll = (Model) =>
       .fieldsLimitation()
       .paginate();
     const document = await features.query;
+    // const document = await features.query.explain();
     res.json({
       results: document.length,
       message: 'Bismillah',
