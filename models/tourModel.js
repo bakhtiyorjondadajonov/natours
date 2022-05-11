@@ -35,6 +35,7 @@ const tourSchema = new mongoose.Schema(
     ratingsAverage: {
       type: Number,
       default: 4.5,
+      set: (val) => Math.round(val * 10) / 10,
     },
     ratingsQuantity: {
       type: Number,
@@ -105,6 +106,7 @@ const tourSchema = new mongoose.Schema(
 );
 // tourSchema.index({ price: 1 });
 tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ startLocation: '2dsphere' });
 // Middleware (also called pre and post hooks)
 // are functions which are passed control during execution of asynchronous
 //  functions. Middleware is specified on the schema level and is useful for writing plugins.
@@ -158,14 +160,14 @@ tourSchema.pre(/^find/, function (next) {
 
 //AGGREGATION MIDDLEWARE
 
-tourSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({
-    $match: {
-      secretTour: { $ne: true },
-    },
-  });
-  next();
-});
+// tourSchema.pre('aggregate', function (next) {
+//   this.pipeline().unshift({
+//     $match: {
+//       secretTour: { $ne: true },
+//     },
+//   });
+//   next();
+// });
 const Tour = mongoose.model('Tour', tourSchema);
 //👆👆We need our model(for this project the Tours) to create a new collection
 
