@@ -61,7 +61,7 @@ userSchema.pre('save', function (next) {
 });
 //Encoding the password
 userSchema.pre('save', async function (next) {
-  //Only run this function if password was modified
+  //Only run this function if password was not modified
   if (!this.isModified('password')) {
     return next();
   }

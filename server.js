@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const app = require('./app');
-//HANDLING UNCOUGHT EXCEPTION
+//HANDLING UNCOUGHT EXPECTATION
 process.on('uncaughtException', (err) => {
   console.log(err.name);
   console.log(err.message);
-  console.log('UNCOUGHT EXCEPTION 💥 SHUTTING DOWN...');
+  console.log('UNCOUGHT EXPECTATION 💥 SHUTTING DOWN...');
   process.exit(1);
 });
 dotenv.config({ path: './config.env' });
