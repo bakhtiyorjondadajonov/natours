@@ -1,9 +1,11 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const path = require('path');
 const rateLimit = require('express-rate-limit');
 const tourRouter = require('./routes/toursRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewsRouter = require('./routes/reviewsRoute');
+const viewsRouter = require('./routes/viewsRoutes');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp'); // | http parametr pollution
@@ -14,6 +16,12 @@ const AppError = require('./utilities/appError');
 const globalErrorHandler = require('./controllers/errorController');
 //---------------------------//
 const app = express();
+
+//------setting views part ----- creating pug environment
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, `views`));
+//---------- SERVING STATIC FILES -------------//
+app.use(express.static(path.join(__dirname, `public`)));
 // ----------------SETTING SECURITY HTTP HEADERS-----------//
 app.use(helmet());
 // ----------------LIMIT REQUESTS FROM THE SAME API OR IP ADDRESS-----------//
@@ -42,8 +50,11 @@ app.use(
     ],
   })
 );
-//---------- SERVING STATIC FILES -------------//
-app.use(express.static(`${__dirname}/public`));
+//ROUTES
+//---------VIEWS ROUTE--------
+app.use('/', viewsRouter);
+
+//---------OTHER ROUTES-------
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewsRouter);
