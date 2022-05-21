@@ -23,7 +23,7 @@ app.set('views', path.join(__dirname, `views`));
 //---------- SERVING STATIC FILES -------------//
 app.use(express.static(path.join(__dirname, `public`)));
 // ----------------SETTING SECURITY HTTP HEADERS-----------//
-app.use(helmet());
+// app.use(helmet.ContentSecurityPolicy());
 // ----------------LIMIT REQUESTS FROM THE SAME API OR IP ADDRESS-----------//
 const limiter = rateLimit({
   max: 100,
