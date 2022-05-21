@@ -9,6 +9,7 @@ const viewsRouter = require('./routes/viewsRoutes');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp'); // | http parametr pollution
+const cookieParser = require('cookie-parser');
 dotenv.config({ path: './config.env' });
 const helmet = require('helmet'); //  | THIS IS A KIND OF STANDART TO USE THIS PACKAGE  WHO IS BUILDING AN EXPRESS APP
 //---------Error handlers
@@ -34,7 +35,12 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 //---------- BODY PARSER,READING DATA FROM BODY INTO REQ.BODY -------------//
 app.use(express.json()); //MODDLEWARE
-
+//---------- COOKIE PARSER,READING DATA FROM COOKIE   -------------//
+app.use(cookieParser());
+app.use((req, res, next) => {
+  console.log(req.cookies);
+  next();
+});
 //---------- DATA SANITIZATION | we had better do this action after body parsing,because first the program reads the data then sanitizes against NoSQL query injection -------------//
 app.use(mongoSanitize());
 app.use(xss());

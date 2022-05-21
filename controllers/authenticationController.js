@@ -16,7 +16,6 @@ const createAndSaveToken = (user, statusCode, res) => {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXP_DATE * 24 * 60 * 60 * 1000
     ),
-
     httpOnly: true,
   };
   const token = signInToken(user._id);
@@ -55,14 +54,9 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError('Incorrect password or email!', 401));
   }
-  const token = signInToken(user._id);
-  //if everything is ok,send token to the client
 
-  res.status(200).json({
-    status: 'success',
-    token,
-    user,
-  });
+  //if everything is ok,send token to the client
+  createAndSaveToken(user, 200, res);
 });
 exports.protect = catchAsync(async (req, res, next) => {
   console.log('Bismillah');
@@ -74,8 +68,7 @@ exports.protect = catchAsync(async (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
-  }
-
+  } else if (req.cookies.jwt) token = req.cookies.jwt;
   if (!token) {
     return next(
       new AppError('You are not logged in,Please log in to get access', 401)
@@ -102,6 +95,34 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
   }
   // GRANT ACCESS TO PROTECTED ROUTE
+  req.user = currentUser;
+  next();
+});
+// Only for rendered pages,no errors!
+exports.isLoggedIn = catchAsync(async (req, res, next) => {
+  console.log('Bismillah');
+  // 1) Getting token and checking if its there
+  let token;
+  if (req.cookies.jwt) token = req.cookies.jwt;
+  if (!token) {
+    return next();
+  }
+  // 2) Verification token
+  const payload = jwt.verify(token, process.env.SECRET_JWT);
+
+  // 3) Check if user still excists
+  const currentUser = await User.findById(payload.id);
+  if (!currentUser) {
+    return next();
+  }
+
+  // 4) Check if user changed password after the JWT was issued
+  if (currentUser.changedPasswordAfter(payload.iat)) {
+    return next();
+  }
+  // GRANT ACCESS TO PROTECTED ROUTE
+  res.locals.user = currentUser; // eache and every pug template has got an access to res.locals
+  // TERE IS A logged in USER
   req.user = currentUser;
   next();
 });
