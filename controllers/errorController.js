@@ -1,3 +1,4 @@
+const req = require('express/lib/request');
 const AppError = require('../utilities/appError');
 
 const handleCastError = (err) => {
@@ -16,28 +17,53 @@ const HandleJsonWebTokenError = (err) => {
 const HandleJsonWebTokenExpired = () => {
   return new AppError('Your token expired,please Log in again!', 401);
 };
-const sendErrorToDev = (err, res) => {
-  res.status(err.statusCode).json({
-    status: err.status,
-    error: err,
-    message: err.message,
-    stack: err.stack,
-  });
-};
-const sendErrorToProd = (err, res) => {
-  //Operational.truested error:send message to client
-  if (err.isOperational) {
+const sendErrorToDev = (err, req, res) => {
+  //API
+  if (req.originalUrl.startsWith('/api')) {
     res.status(err.statusCode).json({
       status: err.status,
+      error: err,
+      message: err.message,
+      stack: err.stack,
+    });
+  } else {
+    // RENDERED WEB SITE
+    res.status(err.statusCode).render('error', {
+      title: 'Something went wrong.',
       message: err.message,
     });
-    //Programming or other unknown error:don't leak error details
+  }
+};
+const sendErrorToProd = (err, req, res) => {
+  // API
+  if (req.originalUrl.startsWith('/api')) {
+    //Operational.truested error:send message to client
+    if (err.isOperational) {
+      return res.status(err.statusCode).json({
+        status: err.status,
+        message: err.message,
+      });
+      //Programming or other unknown error:don't leak error details
+    } else {
+      console.error('Error💥💥', err);
+      return res.status(500).json({
+        status: 'error',
+        message: 'Something went very wrong!',
+      });
+    }
   } else {
-    console.error('Error💥💥', err);
-    res.status(500).json({
-      status: 'error',
-      message: 'Something went very wrong!',
-    });
+    if (err.isOperational) {
+      // RENDERED WEB SITE
+      return res.status(err.statusCode).render('error', {
+        title: 'Something went wrong',
+        message: err.message,
+      });
+    } else {
+      return res.status(500).render('error', {
+        title: 'Something went very wrong!',
+        message: ' Please,Try again later',
+      });
+    }
   }
 };
 
@@ -45,7 +71,7 @@ module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
   if (process.env.NODE_ENV === 'development') {
-    sendErrorToDev(err, res);
+    sendErrorToDev(err, req, res);
   } else if (process.env.NODE_ENV === 'production') {
     let error = err;
     if (err.name === 'CastError') error = handleCastError(err);
@@ -53,6 +79,6 @@ module.exports = (err, req, res, next) => {
     if (err.name === 'TokenExpiredError')
       error = HandleJsonWebTokenExpired(err);
     if (err.code === 11000) error = handleDublicateFieldsDB(err);
-    sendErrorToProd(error, res);
+    sendErrorToProd(error, req, res);
   }
 };

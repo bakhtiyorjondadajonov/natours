@@ -58,6 +58,17 @@ exports.login = catchAsync(async (req, res, next) => {
   //if everything is ok,send token to the client
   createAndSaveToken(user, 200, res);
 });
+
+exports.logout = catchAsync(async (req, res, next) => {
+  res.cookie('jwt', 'loggedout', {
+    expiresIn: Date.now() + 10000,
+    httpOnly: true,
+  });
+  res.status(200).json({
+    status: 'success',
+  });
+});
+
 exports.protect = catchAsync(async (req, res, next) => {
   console.log('Bismillah');
   // 1) Getting token and checking if its there
@@ -98,34 +109,40 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = currentUser;
   next();
 });
+
 // Only for rendered pages,no errors!
-exports.isLoggedIn = catchAsync(async (req, res, next) => {
+exports.isLoggedIn = async (req, res, next) => {
   console.log('Bismillah');
   // 1) Getting token and checking if its there
   let token;
   if (req.cookies.jwt) token = req.cookies.jwt;
-  if (!token) {
-    return next();
-  }
-  // 2) Verification token
-  const payload = jwt.verify(token, process.env.SECRET_JWT);
+  try {
+    if (!token) {
+      return next();
+    }
+    // 2) Verification token
+    const payload = jwt.verify(token, process.env.SECRET_JWT);
 
-  // 3) Check if user still excists
-  const currentUser = await User.findById(payload.id);
-  if (!currentUser) {
-    return next();
-  }
+    // 3) Check if user still excists
+    const currentUser = await User.findById(payload.id);
+    if (!currentUser) {
+      return next();
+    }
 
-  // 4) Check if user changed password after the JWT was issued
-  if (currentUser.changedPasswordAfter(payload.iat)) {
-    return next();
+    // 4) Check if user changed password after the JWT was issued
+    if (currentUser.changedPasswordAfter(payload.iat)) {
+      return next();
+    }
+    // GRANT ACCESS TO PROTECTED ROUTE
+    res.locals.user = currentUser; // eache and every pug template has got an access to res.locals
+    // TERE IS A logged in USER
+    req.user = currentUser;
+    next();
+  } catch (error) {
+    next();
   }
-  // GRANT ACCESS TO PROTECTED ROUTE
-  res.locals.user = currentUser; // eache and every pug template has got an access to res.locals
-  // TERE IS A logged in USER
-  req.user = currentUser;
-  next();
-});
+};
+
 exports.restrictTo = function (...roles) {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
@@ -136,6 +153,7 @@ exports.restrictTo = function (...roles) {
     return next();
   };
 };
+
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   //Get user based on POSTed email
   const user = await User.findOne({ email: req.body.email });
