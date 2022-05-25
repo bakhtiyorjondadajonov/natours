@@ -35,6 +35,11 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 //---------- BODY PARSER,READING DATA FROM BODY INTO REQ.BODY -------------//
 app.use(express.json()); //MODDLEWARE
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
 //---------- COOKIE PARSER,READING DATA FROM COOKIE   -------------//
 app.use(cookieParser());
 app.use((req, res, next) => {
