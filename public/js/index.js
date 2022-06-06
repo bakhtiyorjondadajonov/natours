@@ -1,6 +1,7 @@
 import { login } from './login';
 import { logout } from './login';
 import { displayMap } from './mapbox';
+import { bookTour } from './stripe';
 import {
   updateUserData,
   updateUserPassword,
@@ -44,13 +45,14 @@ if (userForm) {
   userForm.addEventListener('submit', function (e) {
     e.preventDefault();
     const name = document.getElementById('name').value;
-
     const email = document.getElementById('email').value;
-    const data = {
-      name,
-      email,
-    };
-    updateUserSettings('data', data);
+    const photo = document.getElementById('photo').files[0];
+    const form = new FormData();
+    form.append('name', name);
+    form.append('email', email);
+    form.append('photo', photo);
+
+    updateUserSettings('data', form);
     // updateUserData(name, email);
   });
 }
@@ -72,5 +74,16 @@ if (userSettingsForm) {
     };
     updateUserSettings('password', data);
     // updateUserPassword(currentPassword, password, passwordConfirm);
+  });
+}
+
+// Payments and other stuff
+const bookBtn = document.getElementById('book-tour');
+if (bookBtn) {
+  bookBtn.addEventListener('click', function (e) {
+    e.preventDefault();
+    e.target.textContent = 'Processing...';
+    const tourID = bookBtn.dataset.tourId;
+    bookTour(tourID);
   });
 }

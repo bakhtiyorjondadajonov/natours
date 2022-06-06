@@ -4,7 +4,7 @@ const app = require('./app');
 //HANDLING UNCOUGHT EXPECTATION
 process.on('uncaughtException', (err) => {
   console.log(err.name);
-  console.log(err.message);
+  console.log(err);
   console.log('UNCOUGHT EXPECTATION 💥 SHUTTING DOWN...');
   process.exit(1);
 });

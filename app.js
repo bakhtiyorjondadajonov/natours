@@ -5,6 +5,7 @@ const rateLimit = require('express-rate-limit');
 const tourRouter = require('./routes/toursRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewsRouter = require('./routes/reviewsRoute');
+const bookingsRouter = require('./routes/bookingsRoutes');
 const viewsRouter = require('./routes/viewsRoutes');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
@@ -43,7 +44,6 @@ app.use(
 //---------- COOKIE PARSER,READING DATA FROM COOKIE   -------------//
 app.use(cookieParser());
 app.use((req, res, next) => {
-  console.log(req.cookies);
   next();
 });
 //---------- DATA SANITIZATION | we had better do this action after body parsing,because first the program reads the data then sanitizes against NoSQL query injection -------------//
@@ -69,6 +69,7 @@ app.use('/', viewsRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewsRouter);
+app.use('/api/v1/bookings', bookingsRouter);
 //Implementing a Global Error Handling Middleware
 app.all('*', (req, res, next) => {
   next(new AppError(`Cannot find ${req.originalUrl} on this server!`, 404));

@@ -1,8 +1,9 @@
 const User = require('./../models/userModule');
 const jwt = require('jsonwebtoken');
+const Email = require('../utilities/email');
 const crypto = require('crypto');
 const AppError = require('./../utilities/appError');
-const sendEmail = require('./../utilities/email');
+// const sendEmail = require('./../utilities/email');
 // -------- CATCHING ERRORS IN ASYNC FUNCTIONS ---------- //
 const catchAsync = require('./../utilities/catchAsync');
 const signInToken = function (id) {
@@ -38,6 +39,8 @@ exports.signUp = catchAsync(async (req, res, next) => {
     passwordConfirm: req.body.passwordConfirm,
     passwordChangedAt: req.body.passwordChangedAt,
   });
+  const url = `${req.protocol}://${req.get('host')}/me`;
+  await new Email(newUser, url).sendWelcome();
   createAndSaveToken(newUser, 201, res);
 });
 exports.login = catchAsync(async (req, res, next) => {
@@ -70,7 +73,6 @@ exports.logout = catchAsync(async (req, res, next) => {
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
-  console.log('Bismillah');
   // 1) Getting token and checking if its there
   let token;
 
@@ -112,7 +114,6 @@ exports.protect = catchAsync(async (req, res, next) => {
 
 // Only for rendered pages,no errors!
 exports.isLoggedIn = async (req, res, next) => {
-  console.log('Bismillah');
   // 1) Getting token and checking if its there
   let token;
   if (req.cookies.jwt) token = req.cookies.jwt;
@@ -156,6 +157,7 @@ exports.restrictTo = function (...roles) {
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   //Get user based on POSTed email
+
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
     return next(
@@ -167,23 +169,19 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
   // 3) Send the token to user's email
-  const resetURL = `${req.protocol}://${req.get(
-    'host'
-  )}/api/v1/users/resetPassword/${resetToken}`;
 
-  const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to:${resetURL}, 
-  \n if you didn't for get your password,just ignore this e-mail`;
   try {
-    await sendEmail({
-      email: user.email,
-      subject: 'PASSWORD RESET(valid for 10 min)',
-      message,
-    });
+    const resetURL = `${req.protocol}://${req.get(
+      'host'
+    )}/api/v1/users/resetPassword/${resetToken}`;
+    await new Email(user, resetURL).sendPasswordReset();
+
     res.status(200).json({
       status: 'success',
       message: 'Token sent to your email.Please check your inbox or spam',
     });
   } catch (error) {
+    console.log('error: ', error);
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save({ valideateBeforeSave: false });

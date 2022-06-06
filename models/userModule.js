@@ -11,6 +11,7 @@ const userSchema = mongoose.Schema({
   },
   photo: {
     type: String,
+    default: 'default.jpg',
   },
   email: {
     type: String,
@@ -33,7 +34,7 @@ const userSchema = mongoose.Schema({
   // this only WORKS on SAVE AND CREATE
   passwordConfirm: {
     type: 'String',
-    required: [true, 'User must confirm the pasword'],
+    // required: [true, 'User must confirm the pasword'],
     validate: {
       validator: function (el) {
         return el === this.password;
