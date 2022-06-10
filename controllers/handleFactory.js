@@ -1,6 +1,6 @@
 const APIFeatures = require('../utilities/APIFeatures');
-const AppError = require("../utilities/appError");
-const catchAsync = require("../utilities/catchAsync");
+const AppError = require('../utilities/appError');
+const catchAsync = require('../utilities/catchAsync');
 
 exports.deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
@@ -47,7 +47,7 @@ exports.getOne = (Model, popOptions) =>
     const { id } = req.params;
 
     let query = Model.findById(id);
-   
+
     if (popOptions) {
       query = await query.populate(popOptions);
     }

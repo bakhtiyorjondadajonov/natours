@@ -1,6 +1,6 @@
-/* eslint-disable no-unused-vars */
 const compression = require('compression');
 const express = require('express');
+// const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
@@ -10,7 +10,7 @@ const hpp = require('hpp'); // | http parametr pollution
 const cookieParser = require('cookie-parser');
 
 dotenv.config({ path: './config.env' });
-const helmet = require('helmet'); //  | THIS IS A KIND OF STANDART TO USE THIS PACKAGE  WHO IS BUILDING AN EXPRESS APP
+// const helmet = require('helmet'); //  | THIS IS A KIND OF STANDART TO USE THIS PACKAGE  WHO IS BUILDING AN EXPRESS APP
 const tourRouter = require('./routes/toursRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewsRouter = require('./routes/reviewsRoute');
@@ -21,13 +21,14 @@ const AppError = require('./utilities/appError');
 const globalErrorHandler = require('./controllers/errorController');
 //---------------------------//
 const app = express();
+// app.use(cors());
 //------setting views part ----- creating pug environment
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, `views`));
 //---------- SERVING STATIC FILES -------------//
 app.use(express.static(path.join(__dirname, `public`)));
 // ----------------SETTING SECURITY HTTP HEADERS-----------//
-// app.use(helmet.ContentSecurityPolicy());
+// app.use(helmet());
 // ----------------LIMIT REQUESTS FROM THE SAME API OR IP ADDRESS-----------//
 const limiter = rateLimit({
   max: 100,

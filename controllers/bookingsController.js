@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 const stripe = require('stripe')(
   'sk_test_51L7BSQAAxAOnpsobTqiq8VKaPieoR3NLXrsgI1I8BYKB12ykBnb9On51PSuEYC6K3JQKxi3IvMFBuIt6bXBoS3j900k6vRcdCz'
 );
@@ -47,7 +46,7 @@ exports.createBookingCheckout = catchAsync(async (req, res, next) => {
   // This is only temporary,As it is unsecure:everone can make bookings without paying
   const { tour, user, price } = req.query;
   if (!tour && !user && !price) return next();
-  const newBooking = await Bookings.create({
+  await Bookings.create({
     tour,
     user,
     price,
