@@ -1,24 +1,25 @@
+/* eslint-disable no-unused-vars */
 const express = require('express');
 const dotenv = require('dotenv');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const hpp = require('hpp'); // | http parametr pollution
+const cookieParser = require('cookie-parser');
+
+dotenv.config({ path: './config.env' });
+const helmet = require('helmet'); //  | THIS IS A KIND OF STANDART TO USE THIS PACKAGE  WHO IS BUILDING AN EXPRESS APP
 const tourRouter = require('./routes/toursRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewsRouter = require('./routes/reviewsRoute');
 const bookingsRouter = require('./routes/bookingsRoutes');
 const viewsRouter = require('./routes/viewsRoutes');
-const mongoSanitize = require('express-mongo-sanitize');
-const xss = require('xss-clean');
-const hpp = require('hpp'); // | http parametr pollution
-const cookieParser = require('cookie-parser');
-dotenv.config({ path: './config.env' });
-const helmet = require('helmet'); //  | THIS IS A KIND OF STANDART TO USE THIS PACKAGE  WHO IS BUILDING AN EXPRESS APP
 //---------Error handlers
 const AppError = require('./utilities/appError');
 const globalErrorHandler = require('./controllers/errorController');
 //---------------------------//
 const app = express();
-
 //------setting views part ----- creating pug environment
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, `views`));

@@ -1,8 +1,9 @@
 const express = require('express');
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 const router = express.Router({ mergeParams: true });
-const reviewsController = require('./../controllers/reviewController');
-const authenticationController = require('./../controllers/authenticationController');
+const reviewsController = require('../controllers/reviewController');
+const authenticationController = require('../controllers/authenticationController');
+
 router.use(authenticationController.protect);
 router
   .route('/')

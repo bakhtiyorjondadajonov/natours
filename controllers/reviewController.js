@@ -1,6 +1,6 @@
-const { request } = require('../app');
-const Review = require('./../models/reviewModel');
-const catchAsync = require('./../utilities/catchAsync');
+// const { request } = require('../app');
+const Review = require('../models/reviewModel');
+// const catchAsync = require("../utilities/catchAsync");
 const factory = require('./handleFactory');
 
 exports.deleteReview = factory.deleteOne(Review);

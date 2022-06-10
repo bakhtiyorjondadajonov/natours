@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
-const validator1 = require('mongoose-validator');
+// const validator1 = require('mongoose-validator');
 const validator2 = require('validator');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+
 const userSchema = mongoose.Schema({
   name: {
     type: String,
@@ -89,7 +90,8 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
     );
 
     return JWTTimestamp < changedPasswordAtStamp;
-  } else return false; // this means user has not changed the password yet
+  }
+  return false; // this means user has not changed the password yet
 };
 
 //RESETING THE TOKEN IF USER FOROT THE PASSWORD | THIS IS AN INSTANCE METHOD

@@ -2,6 +2,7 @@ const express = require('express');
 const viewsController = require('../controllers/viewsController');
 const authenticationController = require('../controllers/authenticationController');
 const bookingsController = require('../controllers/bookingsController');
+
 const router = express.Router();
 router.route('/me').get(authenticationController.protect, viewsController.me);
 router

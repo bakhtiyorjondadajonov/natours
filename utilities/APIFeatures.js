@@ -3,6 +3,7 @@ class APIFeatures {
     this.query = query;
     this.queryString = queryString;
   }
+
   filter() {
     //FILTERING
     const queryObject = { ...this.queryString };
@@ -19,6 +20,7 @@ class APIFeatures {
     this.query = this.query.find(queryStr);
     return this;
   }
+
   sorting() {
     //ADVANCED FILTERING SORTING
     if (this.queryString.sort) {
@@ -27,6 +29,7 @@ class APIFeatures {
     }
     return this;
   }
+
   fieldsLimitation() {
     //ADVANCED FILTERING FIELDS
     if (this.queryString.fields) {
@@ -35,10 +38,11 @@ class APIFeatures {
     }
     return this;
   }
+
   paginate() {
     // ADVANCED FILTERING PAGINATION AND LIMITATION
-    const page = +this.queryString.page | 1;
-    const limit = +this.queryString.limit | 10;
+    const page = +this.queryString.page || 1;
+    const limit = +this.queryString.limit || 10;
     const skip = (page - 1) * limit;
     this.query.skip(skip).limit(limit);
     return this;

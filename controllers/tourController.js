@@ -1,13 +1,14 @@
-const express = require('express');
-const Tour = require('../models/tourModel');
-const Review = require('../models/reviewModel');
-// -------- CATCHING ERRORS IN ASYNC FUNCTIONS ---------- //
-const catchAsync = require('./../utilities/catchAsync');
-const APIFeatures = require('../utilities/APIFeatures');
-const AppError = require('./../utilities/appError');
-const factory = require('./handleFactory');
+/* eslint-disable prefer-arrow-callback */
 const multer = require('multer');
 const sharp = require('sharp');
+// const express = require('express');
+const Tour = require('../models/tourModel');
+// const Review = require('../models/reviewModel');
+// -------- CATCHING ERRORS IN ASYNC FUNCTIONS ---------- //
+const catchAsync = require('../utilities/catchAsync');
+// const APIFeatures = require('../utilities/APIFeatures');
+const AppError = require('../utilities/appError');
+const factory = require('./handleFactory');
 
 const multerStorage = multer.memoryStorage();
 //-----2) ALLOWING ONLY IMAGE FILES TO BE UPLOADED

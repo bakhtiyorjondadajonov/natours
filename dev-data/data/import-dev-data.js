@@ -1,9 +1,10 @@
-fs = require('fs');
+const fs = require('fs');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const Tour = require('../../models/tourModel');
 const User = require('../../models/userModule');
 const Review = require('../../models/reviewModel');
+
 dotenv.config({ path: './config.env' });
 const DB = process.env.DB.replace('<password>', process.env.DB_PSW);
 mongoose.connect(DB).then(() => console.log('DB is successfully connected!'));

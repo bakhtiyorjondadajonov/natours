@@ -1,11 +1,12 @@
-const User = require('./../models/userModule');
 const jwt = require('jsonwebtoken');
-const Email = require('../utilities/email');
 const crypto = require('crypto');
-const AppError = require('./../utilities/appError');
+const User = require("../models/userModule");
+const Email = require('../utilities/email');
+const AppError = require("../utilities/appError");
 // const sendEmail = require('./../utilities/email');
 // -------- CATCHING ERRORS IN ASYNC FUNCTIONS ---------- //
-const catchAsync = require('./../utilities/catchAsync');
+const catchAsync = require("../utilities/catchAsync");
+
 const signInToken = function (id) {
   return jwt.sign({ id }, process.env.SECRET_JWT, {
     expiresIn: process.env.EXP_DATE,

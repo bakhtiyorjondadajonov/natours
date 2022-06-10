@@ -1,9 +1,10 @@
 const Tour = require('../models/tourModel');
-const { findByIdAndUpdate } = require('../models/userModule');
-const User = require('../models/userModule');
+// const { findByIdAndUpdate } = require('../models/userModule');
+// const User = require('../models/userModule');
 const AppError = require('../utilities/appError');
 const Bookings = require('../models/bookingsModel');
-const catchAsync = require('./../utilities/catchAsync');
+const catchAsync = require('../utilities/catchAsync');
+
 exports.getOverview = catchAsync(async (req, res, next) => {
   // 1) get tour data from collection
   const tours = await Tour.find();
@@ -52,7 +53,7 @@ exports.getMyTours = catchAsync(async (req, res, next) => {
 
   // find tours based on IDs of bookings
 
-  let tourIDs = bookings.map((booking) => booking.tour);
+  const tourIDs = bookings.map((booking) => booking.tour);
 
   const tours = await Tour.find({ _id: { $in: tourIDs } });
 

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+// eslint-disable-next-line no-unused-vars
 const slugify = require('slugify');
-const User = require('./userModule');
+// const User = require('./userModule');
 //Creating Schema  Sending Data to DATABASE similar to THE INTERFACE IN TYPESCRIPT
 const tourSchema = new mongoose.Schema(
   {

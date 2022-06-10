@@ -1,9 +1,9 @@
-const fs = require('fs');
-const express = require('express');
+// const fs = require('fs');
+// const express = require('express');
 const multer = require('multer');
 const sharp = require('sharp');
 const User = require('../models/userModule');
-const catchAsync = require('./../utilities/catchAsync');
+const catchAsync = require('../utilities/catchAsync');
 const AppError = require('../utilities/appError');
 const factory = require('./handleFactory');
 //--------CONFIGURING MULTER TO OUR NEEDS

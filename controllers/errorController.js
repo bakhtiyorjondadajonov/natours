@@ -1,3 +1,6 @@
+/* eslint-disable no-lonely-if */
+/* eslint-disable no-else-return */
+/* eslint-disable prettier/prettier */
 // const req = require('express/lib/request');
 const AppError = require('../utilities/appError');
 
@@ -14,9 +17,9 @@ const HandleJsonWebTokenError = (err) => {
   const message = 'Invalid web token,Please log in again';
   return new AppError(message, 401);
 };
-const HandleJsonWebTokenExpired = () => {
-  return new AppError('Your token expired,please Log in again!', 401);
-};
+const HandleJsonWebTokenExpired = () =>
+  new AppError('Your token expired,please Log in again!', 401);
+
 const sendErrorToDev = (err, req, res) => {
   //API
   if (req.originalUrl.startsWith('/api')) {
