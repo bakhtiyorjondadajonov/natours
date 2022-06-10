@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+const compression = require('compression');
 const express = require('express');
 const dotenv = require('dotenv');
 const path = require('path');
@@ -62,6 +63,7 @@ app.use(
     ],
   })
 );
+app.use(compression());
 //ROUTES
 //---------VIEWS ROUTE--------
 app.use('/', viewsRouter);
