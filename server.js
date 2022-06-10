@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const app = require('./app');
@@ -14,7 +15,7 @@ mongoose
   .connect(DB)
   .then(() => console.log('Database connection is successful!'));
 
-const port = process.env.port || 8000;
+const port = process.env.PORT || 8000;
 const server = app.listen(port, '127.0.0.1', () => {
   console.log(`Server is running on port ${port}`);
 });
