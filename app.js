@@ -20,8 +20,9 @@ const viewsRouter = require('./routes/viewsRoutes');
 const AppError = require('./utilities/appError');
 const globalErrorHandler = require('./controllers/errorController');
 //---------------------------//
+// Start express app
 const app = express();
-// app.use(cors());
+app.enable('trust proxy');
 //------setting views part ----- creating pug environment
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, `views`));
@@ -37,6 +38,11 @@ const limiter = rateLimit({
 });
 
 app.use('/api', limiter);
+app.post(
+  '/webhook-checkout',
+  bodyParser.raw({ type: 'application/json' }),
+  bookingController.webhookCheckout
+);
 //---------- BODY PARSER,READING DATA FROM BODY INTO REQ.BODY -------------//
 app.use(express.json()); //MODDLEWARE
 app.use(
