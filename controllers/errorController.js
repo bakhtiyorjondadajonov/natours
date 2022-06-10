@@ -13,7 +13,7 @@ const handleDublicateFieldsDB = (err) => {
   const message = `Dublicate field value ${value}. Please use another value!`;
   return new AppError(message, 400);
 };
-const HandleJsonWebTokenError = (err) => {
+const HandleJsonWebTokenError = () => {
   const message = 'Invalid web token,Please log in again';
   return new AppError(message, 401);
 };
