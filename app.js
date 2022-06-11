@@ -1,8 +1,10 @@
 const compression = require('compression');
 const express = require('express');
 // const cors = require('cors');
+
 const dotenv = require('dotenv');
 const path = require('path');
+// const bodyParser = require('body-parser');
 const rateLimit = require('express-rate-limit');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
@@ -16,6 +18,7 @@ const userRouter = require('./routes/userRoutes');
 const reviewsRouter = require('./routes/reviewsRoute');
 const bookingsRouter = require('./routes/bookingsRoutes');
 const viewsRouter = require('./routes/viewsRoutes');
+// const bookingsController = require('./controllers/bookingsController');
 //---------Error handlers
 const AppError = require('./utilities/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -38,11 +41,11 @@ const limiter = rateLimit({
 });
 
 app.use('/api', limiter);
-app.post(
-  '/webhook-checkout',
-  bodyParser.raw({ type: 'application/json' }),
-  bookingController.webhookCheckout
-);
+// app.post(
+//   '/webhook-checkout',
+//   bodyParser.raw({ type: 'application/json' }),
+//   bookingsController.webhookCheckout
+// );
 //---------- BODY PARSER,READING DATA FROM BODY INTO REQ.BODY -------------//
 app.use(express.json()); //MODDLEWARE
 app.use(
